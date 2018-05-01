@@ -1,0 +1,9 @@
+# System & Editor Settings
+.*/
+bin/
+build/
+.classpath
+.project
+
+# UI Related
+node_modules/
