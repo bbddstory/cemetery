@@ -1,6 +1,5 @@
 # System & Editor Settings
 .*/
-bin/
 build/
 .classpath
 .project
