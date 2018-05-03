@@ -40,9 +40,6 @@ usersRouter.use(function (req, res, next) {
  * Register users
  */
 usersRouter.post('/register', function (req, res, next) {
-  console.log(req.body);
-  
-  // var today = new Date();
   var data = {
     error: 1,
     data: ''
@@ -52,7 +49,7 @@ usersRouter.post('/register', function (req, res, next) {
     'first_name': req.body.firstName,
     'last_name': req.body.lastName,
     'email': req.body.email,
-    'password': req.body.password
+    'password': req.body.pwd
   }
 
   dbc.getConnection(function (err, dbc) {
@@ -61,13 +58,12 @@ usersRouter.post('/register', function (req, res, next) {
       data['data'] = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      console.log(userData);
-      
       dbc.query('INSERT INTO `phantom_zone`.`users` SET ? ', userData, function (err, rows, fields) {
         if (!err) {
-          data.error = 0;
-          data['data'] = 'User registered successfully!';
-          res.status(201).json(data);
+          token = jwt.sign(req.body, process.env.SECRET_KEY, {
+            expiresIn: 5000
+          });
+          res.status(201).send(token);
         } else {
           data['data'] = 'Error Occured!';
           res.status(400).json(data);
@@ -84,7 +80,7 @@ usersRouter.post('/register', function (req, res, next) {
 usersRouter.post('/login', function (req, res, next) {
   var data = {};
   var email = req.body.email;
-  var password = req.body.password;
+  var password = req.body.pwd;
 
   dbc.getConnection(function (err, dbc) {
     if (err) {
@@ -100,10 +96,10 @@ usersRouter.post('/login', function (req, res, next) {
         } else {
           if (rows.length > 0) {
             if (rows[0].password == password) {
+              data.error = 0;
               token = jwt.sign(rows[0], process.env.SECRET_KEY, {
                 expiresIn: 5000
               });
-              data.error = 0;
               data['token'] = token;
               res.status(200).json(data);
             } else {
