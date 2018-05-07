@@ -1,36 +1,7 @@
 var express = require('express');
-var cors = require('cors');
-var jwt = require('jsonwebtoken');
 
 var videosRouter = express.Router();
 var dbc = require('../database/database');
-var token;
-
-videosRouter.use(cors()); // Enable CORS
-
-/**
- * APIs authorisation with JWT token
- */
-videosRouter.use(function (req, res, next) {
-  var token = req.body.token || req.headers['token'];
-  var data = {};
-
-  if (token) {
-    jwt.verify(token, process.env.SECRET_KEY, function (err) {
-      if (err) {
-        data['error'] = 1;
-        data['data'] = 'Token is invalid';
-        res.status(500).json(data);
-      } else {
-        next();
-      }
-    });
-  } else {
-    data['error'] = 1;
-    data['data'] = 'Please send a token';
-    res.status(403).json(data);
-  }
-});
 
 /**
  * Add a new video
@@ -81,12 +52,6 @@ videosRouter.post('/add', function (req, res, next) {
       dbc.release();
     }
   });
-
-  dbc.query(query, function (err, rows, fields) {
-    if (err) throw err;
-    console.log(rows);
-  });
-  dbc.release();
 });
 
 module.exports = videosRouter;

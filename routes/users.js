@@ -1,40 +1,8 @@
 var express = require('express');
-var cors = require('cors');
 var jwt = require('jsonwebtoken');
 
 var usersRouter = express.Router();
 var dbc = require('../database/database');
-var token;
-
-usersRouter.use(cors()); // Enable CORS
-
-/**
- * APIs authorisation with JWT token
- */
-usersRouter.use(function (req, res, next) {
-  if (req.url === '/register' || req.url === '/login') {
-    next();
-  } else {
-    var token = req.body.token || req.headers['token'];
-    var data = {};
-
-    if (token) {
-      jwt.verify(token, process.env.SECRET_KEY, function (err) {
-        if (err) {
-          data['error'] = 1;
-          data['data'] = 'Token is invalid';
-          res.status(500).json(data);
-        } else {
-          next();
-        }
-      });
-    } else {
-      data['error'] = 1;
-      data['data'] = 'Please send a token';
-      res.status(403).json(data);
-    }
-  }
-});
 
 /**
  * Register users
@@ -60,8 +28,8 @@ usersRouter.post('/register', function (req, res, next) {
     } else {
       dbc.query('INSERT INTO `phantom_zone`.`users` SET ? ', userData, function (err, rows, fields) {
         if (!err) {
-          token = jwt.sign(req.body, process.env.SECRET_KEY, {
-            expiresIn: 5000
+          var token = jwt.sign(req.body, process.env.SECRET_KEY, {
+            expiresIn: '7d'
           });
           res.status(201).send(token);
         } else {
@@ -94,11 +62,12 @@ usersRouter.post('/login', function (req, res, next) {
           data['data'] = 'Error Occured!';
           res.status(400).json(data);
         } else {
+          
           if (rows.length > 0) {
-            if (rows[0].password == password) {
+            if (rows[0].password === password) {
               data.error = 0;
-              token = jwt.sign(rows[0], process.env.SECRET_KEY, {
-                expiresIn: 5000
+              var token = jwt.sign({ email: rows[0].email, password: rows[0].password}, process.env.SECRET_KEY, {
+                expiresIn: '7d'
               });
               data['token'] = token;
               res.status(200).json(data);
@@ -123,7 +92,6 @@ usersRouter.post('/login', function (req, res, next) {
  * Get users
  */
 usersRouter.get('/get', function (req, res) {
-  var token = req.body.token || req.headers['token'];
   var data = {};
 
   dbc.getConnection(function (err, dbc) {

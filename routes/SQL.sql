@@ -1,48 +1,10 @@
-(SELECT eng_title FROM phantom_zone.videos WHERE category='TV' limit 3)
-UNION
-(SELECT eng_title FROM phantom_zone.videos WHERE category='Movies' limit 3);
-
-
 SELECT * FROM phantom_zone.users;
 
-INSERT INTO `phantom_zone`.`videos`(`id`, `eng_title`, `orig_title`, `year`, `runtime`, `stars`, `director`, `creator`, `plot`, `imdb`, `rating`, `douban`, `mtime`, `trailer`, `featurette`, `status`, `category`, `poster`, `subtitle`) VALUES(1525154394613,'Counterpart','N/A',2017,'1h','J.K. Simmons, Harry Lloyd, Olivia Williams','N/A','Justin Marks','A UN employee discovers the agency he works for is hiding a gateway to a parallel dimension.','tt4643084',8.2,'26474254','224002','https://www.youtube.com/embed/c3Bu2DOM66g?rel=0&amp;showinfo=0','https://www.youtube.com/embed/mwqKdd7PNAA?rel=0&amp;showinfo=0',1,'TV','https://ia.media-imdb.com/images/M/MV5BMTcwNTM3OTQ4OV5BMl5BanBnXkFtZTgwMjgxMjEzNDM@._V1_UX182_CR0,0,182,268_AL_.jpg','N/A');
+SELECT * FROM phantom_zone.videos WHERE eng_title LIKE '%one%';
 
-INSERT INTO `phantom_zone`.`videos`(`id`,`director`,`eng_title`,`featurette`,`imdb`,`orig_title`,`plot`,`poster`,`status`,`trailer`,`year`) VALUES('1525397918337','Yoshiaki Kawajiri, Rintaro, Katsuhiro Ôtomo','Neo Tokyo','https://www.youtube.com/embed/B4Il1aktf0M?rel=0&amp;showinfo=0','tt0185481','迷宮物語 (めいきゅうものがたり)','A trilogy of separate stories. In "Labyrinth labyrinthos", a girl and her cat enter a strange world. In "Running Man", a racer takes on the ultimate opponent. In "Construction Cancellation Order", a man must shut down worker robots.','https://ia.media-imdb.com/images/M/MV5BZGE0NTIzMWEtNDMzNi00Y2EyLWIxY2QtYWQ5NDE0ZGZkOTY0L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_UY268_CR2,0,182,268_AL_.jpg','1','https://www.youtube.com/embed/T9wLTSgfNOA?rel=0&amp;showinfo=0','1987');
+INSERT INTO `phantom_zone`.`users` values ( '123456','Leon','Li','bbddstory@gmail.com','LEON314@firebase');
 
-INSERT INTO `phantom_zone`.`videos`(`id`,`eng_title`,`prod`,`status`,`year`) VALUES("1525397993798",'Wildlife Elusive Feline Tsushima Leopard Cat','NHK','1','2011');
-
-SELECT * FROM phantom_zone.videos WHERE stars LIKE '%e%';
-
-INSERT INTO `phantom_zone`.`users` values ( '123456', 'Leon',
-  'Li',
-  'bbddstory@gmail.com',
-  'LEON314@firebase');
-
-select * from 
-(SELECT 
-    eng_title, category, COUNT(*)
-FROM
-    phantom_zone.videos
-WHERE
-    category in (SELECT DISTINCT
-            category
-        FROM
-            phantom_zone.videos) order by year) as T;
-            
-SELECT 
-    year, eng_title,GROUP_CONCAT(category
-        ORDER BY cnt DESC) category
-FROM
-    (SELECT 
-        year, eng_title, category, COUNT(3) cnt
-    FROM
-        phantom_zone.videos
-    GROUP BY category, year) t
-GROUP BY category;
-
-SELECT * FROM phantom_zone.videos WHERE category='TV' LIMIT 3;
-
-
+/* Latest list on home */
 (SELECT * FROM phantom_zone.videos WHERE category='Movies' LIMIT 3)
 UNION
 (SELECT * FROM phantom_zone.videos WHERE category='TV' LIMIT 3)
@@ -51,14 +13,7 @@ UNION
 UNION
 (SELECT * FROM phantom_zone.videos WHERE category='Animations' LIMIT 3);
 
-
-
-
-
-
-
-
-
+/* Vdeos table data insertions */
 INSERT INTO `phantom_zone`.`videos`(`id`,`category`,`director`,`eng_title`,`featurette`,`imdb`,`orig_title`,`plot`,`poster`,`status`,`trailer`,`year`) VALUES('1525412611906','Animations','Yoshiaki Kawajiri, Rintaro, Katsuhiro Ôtomo','Neo Tokyo','https://www.youtube.com/embed/B4Il1aktf0M?rel=0&amp;showinfo=0','tt0185481','迷宮物語 (めいきゅうものがたり)','A trilogy of separate stories. In "Labyrinth labyrinthos", a girl and her cat enter a strange world. In "Running Man", a racer takes on the ultimate opponent. In "Construction Cancellation Order", a man must shut down worker robots.','https://ia.media-imdb.com/images/M/MV5BZGE0NTIzMWEtNDMzNi00Y2EyLWIxY2QtYWQ5NDE0ZGZkOTY0L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_UY268_CR2,0,182,268_AL_.jpg','1','https://www.youtube.com/embed/T9wLTSgfNOA?rel=0&amp;showinfo=0','1987');
 INSERT INTO `phantom_zone`.`videos`(`id`,`category`,`eng_title`,`orig_title`,`status`,`year`) VALUES('1525412611911','Animations','Tales from Earthsea','ゲド戦記 (げどせんき)','1','2006');
 INSERT INTO `phantom_zone`.`videos`(`id`,`category`,`eng_title`,`orig_title`,`status`,`year`) VALUES('1525412611914','Animations','Doraemon Nobita and the New Steel Troops Angel Wings','新·ドラえもんのび太と鉄人兵団 (のびたとてつじんへいだん)','1','2011');
