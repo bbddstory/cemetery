@@ -7,10 +7,9 @@ var dbc = require('../database/database');
 /**
  * Register users
  */
-usersRouter.post('/register', function (req, res, next) {
+usersRouter.post('/register', (req, res, next) => {
   var data = {
-    error: 1,
-    data: ''
+    error: 0
   }
   var userData = {
     'id': new Date().getTime(),
@@ -20,99 +19,73 @@ usersRouter.post('/register', function (req, res, next) {
     'password': req.body.pwd
   }
 
-  dbc.getConnection(function (err, dbc) {
+  dbc.getConnection((err, dbc) => {
     if (err) {
-      data['error'] = 1;
-      data['data'] = 'Internal Server Error';
+      data.error = 1;
+      data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('INSERT INTO `phantom_zone`.`users` SET ? ', userData, function (err, rows, fields) {
-        if (!err) {
-          var token = jwt.sign(req.body, process.env.SECRET_KEY, {
+      dbc.query('INSERT INTO `phantom_zone`.`users` SET ? ', userData, (err, rows, fields) => {
+        if (err) {
+          data.error = 1;
+          data.data = 'Error occured';
+          res.status(400).json(data);
+        } else {
+          data.token = jwt.sign(req.body, process.env.SECRET_KEY, {
             expiresIn: '7d'
           });
-          res.status(201).send(token);
-        } else {
-          data['data'] = 'Error Occured!';
-          res.status(400).json(data);
+          res.status(201).json(data);
         }
       });
       dbc.release();
     }
-  });
+  })
 });
 
 /**
  * User login
  */
-usersRouter.post('/login', function (req, res, next) {
-  var data = {};
+usersRouter.post('/login', (req, res, next) => {
+  var data = {
+    error: 0
+  }
   var email = req.body.email;
   var password = req.body.pwd;
 
-  dbc.getConnection(function (err, dbc) {
+  dbc.getConnection((err, dbc) => {
     if (err) {
-      data['error'] = 1;
-      data['data'] = 'Internal Server Error';
+      data.error = 1;
+      data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('SELECT * FROM `phantom_zone`.`users` WHERE email = ?', [email], function (err, rows, fields) {
+      dbc.query('SELECT * FROM `phantom_zone`.`users` WHERE email = ?', [email], (err, rows, fields) => {
         if (err) {
           data.error = 1;
-          data['data'] = 'Error Occured!';
+          data.data = 'Error Occured!';
           res.status(400).json(data);
         } else {
-          
-          if (rows.length > 0) {
+          if (rows.length === 1) {
             if (rows[0].password === password) {
-              data.error = 0;
-              var token = jwt.sign({ email: rows[0].email, password: rows[0].password}, process.env.SECRET_KEY, {
+              data.token = jwt.sign(req.body, process.env.SECRET_KEY, {
                 expiresIn: '7d'
               });
-              data['token'] = token;
+              data.user = rows[0].first_name
               res.status(200).json(data);
             } else {
               data.error = 1;
-              data['data'] = 'Email and Password does not match';
+              data.data = 'Email or password wrong';
               res.status(204).json(data);
             }
           } else {
             data.error = 1;
-            data['data'] = 'Email does not exists!';
+            data.data = 'Email not found';
             res.status(204).json(data);
           }
         }
       });
       dbc.release();
     }
-  });
-});
-
-/**
- * Get users
- */
-usersRouter.get('/get', function (req, res) {
-  var data = {};
-
-  dbc.getConnection(function (err, dbc) {
-    if (err) {
-      data['error'] = 1;
-      data['data'] = 'Internal Server Error';
-      res.status(500).json(data);
-    } else {
-      dbc.query('SELECT * FROM `phantom_zone`.`users`', function (err, rows, fields) {
-        if (!err) {
-          data['error'] = 0;
-          data['data'] = rows;
-          res.status(200).json(data);
-        } else {
-          data['data'] = 'No data found';
-          res.status(204).json(data);
-        }
-      });
-      dbc.release();
-    }
-  });
+  })
 });
 
 module.exports = usersRouter;

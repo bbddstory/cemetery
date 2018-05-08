@@ -7,10 +7,10 @@ var tokenChecker = express.Router();
  * APIs authorisation with JWT
  */
 tokenChecker.use(function (req, res, next) {
-    console.log('-- Token checker --');
-    console.log('Token: ', req.body.token);
-    console.log('URL: ', req.url);
-    console.log('-------------------');
+    // console.log('-- Token checker --');
+    // console.log('Token: ', req.body.token);
+    // console.log('URL: ', req.url);
+    // console.log('-------------------');
     
     if (req.url === '/users/register' || req.url === '/users/login') {
         next();

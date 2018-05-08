@@ -6,10 +6,9 @@ var dbc = require('../database/database');
 /**
  * Add a new video
  */
-videosRouter.post('/add', function (req, res, next) {
+videosRouter.post('/add', (req, res, next) => {
   var data = {
-    error: 1,
-    data: ''
+    error: 0
   }
   var videoData = {
     'id': new Date(),
@@ -33,20 +32,19 @@ videosRouter.post('/add', function (req, res, next) {
     'subtitle': req.body.subtitle
   }
 
-  dbc.getConnection(function (err, dbc) {
+  dbc.getConnection((err, dbc) => {
     if (err) {
-      data['error'] = 1;
-      data['data'] = 'Internal Server Error';
+      data.error = 1;
+      data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('INSERT INTO `phantom_zone`.`videos` SET ? ', videoData, function (err, rows, fields) {
-        if (!err) {
-          data.error = 0;
-          data['data'] = 'User registered successfully!';
-          res.status(201).json(data);
-        } else {
-          data['data'] = 'Error Occured!';
+      dbc.query('INSERT INTO `phantom_zone`.`videos` SET ? ', videoData, (err, rows, fields) => {
+        if (err) {
+          data.data = 'Error occured';
           res.status(400).json(data);
+        } else {
+          data.data = 'Added';
+          res.status(201).json(data);
         }
       });
       dbc.release();
