@@ -7,6 +7,7 @@ var logger = require('morgan');
 
 var app = express();
 var tokenChecker = require('./routes/tokenChecker');
+var searchRouter = require('./routes/search');
 var usersRouter = require('./routes/users');
 var homeRouter = require('./routes/home');
 var videosRouter = require('./routes/videos');
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(tokenChecker);
+app.use('/search', searchRouter);
 app.use('/users', usersRouter);
 app.use('/home', homeRouter);
 app.use('/videos', videosRouter);

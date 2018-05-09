@@ -4,6 +4,34 @@ var videosRouter = express.Router();
 var dbc = require('../database/database');
 
 /**
+ * Load videos of a specified category, paginate the data
+ */
+videosRouter.post('/load_cat', (req, res, next) => {
+  var data = {
+    error: 0
+  }
+
+  dbc.getConnection((err, dbc) => {
+    if (err) {
+      data.error = 1;
+      data.data = 'Internal Server Error';
+      res.status(500).json(data);
+    } else {
+      dbc.query('SELECT * FROM `phantom_zone`.`videos` WHERE category = ', req.body.category, (err, rows, fields) => {
+        if (err) {
+          data.data = 'Error occured';
+          res.status(400).json(data);
+        } else {
+          data.data = rows;
+          res.status(200).json(data);
+        }
+      });
+      dbc.release();
+    }
+  });
+});
+
+/**
  * Add a new video
  */
 videosRouter.post('/add', (req, res, next) => {
