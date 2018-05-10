@@ -10,6 +10,11 @@ videosRouter.post('/load_cat', (req, res, next) => {
   var data = {
     error: 0
   }
+  var cat = req.body.category;
+  var ipp = req.body.ipp;
+  var queryCnt = `SELECT COUNT(*) cnt FROM phantom_zone.videos WHERE category='` + cat + `';`
+  var queryPage = `SELECT * FROM phantom_zone.videos WHERE category='` + cat
+    + `' ORDER BY year asc LIMIT ` + ipp * (req.body.currPage - 1) + `,` + ipp + `;`
 
   dbc.getConnection((err, dbc) => {
     if (err) {
@@ -17,12 +22,13 @@ videosRouter.post('/load_cat', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('SELECT * FROM `phantom_zone`.`videos` WHERE category = ', req.body.category, (err, rows, fields) => {
+      dbc.query(queryCnt + queryPage, (err, results, fields) => {
         if (err) {
           data.data = 'Error occured';
           res.status(400).json(data);
         } else {
-          data.data = rows;
+          data.cnt = results[0][0].cnt;
+          data.data = results[1];
           res.status(200).json(data);
         }
       });
@@ -66,7 +72,7 @@ videosRouter.post('/add', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('INSERT INTO `phantom_zone`.`videos` SET ? ', videoData, (err, rows, fields) => {
+      dbc.query(`INSERT INTO phantom_zone.videos SET ? `, videoData, (err, rows, fields) => {
         if (err) {
           data.data = 'Error occured';
           res.status(400).json(data);

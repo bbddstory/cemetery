@@ -10,13 +10,13 @@ searchRouter.post('/', (req, res, next) => {
   var data = {
     error: 0
   }
-  var query_fuzzy = `SELECT *
+  var queryFuzzy = `SELECT *
     FROM
         phantom_zone.videos
     WHERE
         UPPER(eng_title) LIKE UPPER('%` + req.body.key + `%')
             OR UPPER(orig_title) LIKE UPPER('%` + req.body.key + `%');`;
-  var query_exact = `
+  var queryExact = `
     (SELECT * FROM phantom_zone.videos WHERE 
         UPPER(eng_title) LIKE UPPER('% ` + req.body.key + ` %')
             OR UPPER(orig_title) LIKE UPPER('% ` + req.body.key + ` %'))
@@ -35,7 +35,7 @@ searchRouter.post('/', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query(req.body.type ? query_exact : query_fuzzy, (err, rows, fields) => {
+      dbc.query(req.body.type ? queryExact : queryFuzzy, (err, rows, fields) => {
         if (err) {
           data.error = 1;
           data.data = 'Error occured';
