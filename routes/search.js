@@ -10,22 +10,22 @@ searchRouter.post('/', (req, res, next) => {
   var data = {
     error: 0
   }
-  var queryFuzzy = `SELECT *
+  var queryFuzzy = `SELECT id,category,eng_title,director,creator,prod,poster
     FROM
         phantom_zone.videos
     WHERE
         UPPER(eng_title) LIKE UPPER('%` + req.body.key + `%')
             OR UPPER(orig_title) LIKE UPPER('%` + req.body.key + `%');`;
   var queryExact = `
-    (SELECT * FROM phantom_zone.videos WHERE 
+    (SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE 
         UPPER(eng_title) LIKE UPPER('% ` + req.body.key + ` %')
             OR UPPER(orig_title) LIKE UPPER('% ` + req.body.key + ` %'))
     UNION
-    (SELECT * FROM phantom_zone.videos WHERE
+    (SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE
         UPPER(eng_title) LIKE UPPER('` + req.body.key + ` %')
             OR UPPER(orig_title) LIKE UPPER('` + req.body.key + ` %'))
     UNION
-    (SELECT * FROM phantom_zone.videos WHERE
+    (SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE
         UPPER(eng_title) LIKE UPPER('% ` + req.body.key + `')
             OR UPPER(orig_title) LIKE UPPER('% ` + req.body.key + `'));`;
 

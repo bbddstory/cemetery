@@ -14,17 +14,17 @@ homeRouter.post('/lists', (req, res, next) => {
   /**
    * Get the latest videos of all categories
    */
-  var queryLatest = `(SELECT * FROM phantom_zone.videos WHERE category='Movies' LIMIT 3)
+  var queryLatest = `(SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE category='Movies' LIMIT 3)
     UNION
-      (SELECT * FROM phantom_zone.videos WHERE category = 'TV' LIMIT 3)
+      (SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE category = 'TV' LIMIT 3)
     UNION
-      (SELECT * FROM phantom_zone.videos WHERE category = 'Documentaries' LIMIT 3)
+      (SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE category = 'Documentaries' LIMIT 3)
     UNION
-      (SELECT * FROM phantom_zone.videos WHERE category = 'Animations' LIMIT 3);`;
+      (SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE category = 'Animations' LIMIT 3);`;
   /**
    * Get the watch later list
    */
-  var queryWatchLater = `SELECT *
+  var queryWatchLater = `SELECT v.id,v.category,v.eng_title,v.director,v.creator,v.prod,v.poster
     FROM
       phantom_zone.users u,
       phantom_zone.watch_later w,
@@ -34,7 +34,7 @@ homeRouter.post('/lists', (req, res, next) => {
   /**
    * Get the recommendations list
    */
-  var queryRecomm = `SELECT *
+  var queryRecomm = `SELECT v.id,v.category,v.eng_title,v.director,v.creator,v.prod,v.poster
     FROM
       phantom_zone.users u,
       phantom_zone.recommendations r,

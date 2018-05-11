@@ -11,6 +11,7 @@ var searchRouter = require('./routes/search');
 var usersRouter = require('./routes/users');
 var homeRouter = require('./routes/home');
 var videosRouter = require('./routes/videos');
+var detailsRouter = require('./routes/details');
 
 process.env.SECRET_KEY = 'cemetery';
 
@@ -30,6 +31,7 @@ app.use('/search', searchRouter);
 app.use('/users', usersRouter);
 app.use('/home', homeRouter);
 app.use('/videos', videosRouter);
+app.use('/details', detailsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

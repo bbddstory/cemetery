@@ -13,7 +13,7 @@ videosRouter.post('/load_cat', (req, res, next) => {
   var cat = req.body.category;
   var ipp = req.body.ipp;
   var queryCnt = `SELECT COUNT(*) cnt FROM phantom_zone.videos WHERE category='` + cat + `';`
-  var queryPage = `SELECT * FROM phantom_zone.videos WHERE category='` + cat
+  var queryPage = `SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE category='` + cat
     + `' ORDER BY year asc LIMIT ` + ipp * (req.body.currPage - 1) + `,` + ipp + `;`
 
   dbc.getConnection((err, dbc) => {
