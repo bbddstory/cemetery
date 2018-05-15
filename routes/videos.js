@@ -12,8 +12,8 @@ videosRouter.post('/load_cat', (req, res, next) => {
   }
   var cat = req.body.category;
   var ipp = req.body.ipp;
-  var queryCnt = `SELECT COUNT(*) cnt FROM phantom_zone.videos WHERE category='` + cat + `';`
-  var queryPage = `SELECT id,category,eng_title,director,creator,prod,poster FROM phantom_zone.videos WHERE category='` + cat
+  var queryCnt = `SELECT COUNT(*) cnt FROM foreverj_phantom_zone.videos WHERE category='` + cat + `';`
+  var queryPage = `SELECT id,category,eng_title,director,creator,prod,poster FROM foreverj_phantom_zone.videos WHERE category='` + cat
     + `' ORDER BY year asc LIMIT ` + ipp * (req.body.currPage - 1) + `,` + ipp + `;`
 
   dbc.getConnection((err, dbc) => {
@@ -72,7 +72,7 @@ videosRouter.post('/add', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query(`INSERT INTO phantom_zone.videos SET ? `, videoData, (err, rows, fields) => {
+      dbc.query(`INSERT INTO foreverj_phantom_zone.videos SET ? `, videoData, (err, rows, fields) => {
         if (err) {
           data.data = 'Error occured';
           res.status(400).json(data);

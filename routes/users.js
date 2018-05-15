@@ -25,7 +25,7 @@ usersRouter.post('/register', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('INSERT INTO `phantom_zone`.`users` SET ? ', userData, (err, rows, fields) => {
+      dbc.query('INSERT INTO foreverj_phantom_zone.users SET ? ', userData, (err, rows, fields) => {
         if (err) {
           data.error = 1;
           data.data = 'Error occured';
@@ -58,7 +58,7 @@ usersRouter.post('/login', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('SELECT * FROM `phantom_zone`.`users` WHERE email = ?', [email], (err, rows, fields) => {
+      dbc.query('SELECT * FROM users WHERE email=?', [email], (err, rows, fields) => {
         if (err) {
           data.error = 1;
           data.data = 'Error Occured!';
