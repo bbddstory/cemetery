@@ -25,7 +25,7 @@ usersRouter.post('/register', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('INSERT INTO foreverj_phantom_zone.users SET ? ', userData, (err, rows, fields) => {
+      dbc.query('INSERT INTO users SET ? ', userData, (err, rows, fields) => {
         if (err) {
           data.error = 1;
           data.data = 'Error occured';

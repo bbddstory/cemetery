@@ -1,81 +1,48 @@
 CREATE TABLE `recommendations`
 (
-  `user_id` varchar
-(20) NOT NULL,
-  `video_id` varchar
-(20) NOT NULL
+  `user_id` varchar(20) NOT NULL,
+  `video_id` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='For storing recommendations lists of users.';
 
 
 CREATE TABLE `users`
 (
-  `id` varchar
-(20) NOT NULL DEFAULT '',
-  `first_name` varchar
-(50) NOT NULL,
-  `last_name` varchar
-(50) NOT NULL,
-  `email` varchar
-(100) NOT NULL,
-  `password` varchar
-(50) NOT NULL,
-  PRIMARY KEY
-(`id`),
-  UNIQUE KEY `id_UNIQUE`
-(`id`),
-  UNIQUE KEY `email_UNIQUE`
-(`email`)
+  `id` varchar(20) NOT NULL DEFAULT '',
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  PRIMARY KEY(`id`),
+  UNIQUE KEY `id_UNIQUE`(`id`),
+  UNIQUE KEY `email_UNIQUE`(`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `videos`
 (
-  `id` varchar
-(20) NOT NULL,
-  `eng_title` varchar
-(200) NOT NULL,
-  `orig_title` varchar
-(200) DEFAULT NULL,
-  `year` varchar
-(4) NOT NULL,
-  `runtime` varchar
-(10) DEFAULT NULL,
-  `stars` varchar
-(200) DEFAULT NULL,
-  `director` varchar
-(100) DEFAULT NULL,
-  `creator` varchar
-(100) DEFAULT NULL,
-  `plot` varchar
-(800) DEFAULT NULL,
-  `imdb` varchar
-(10) DEFAULT NULL,
-  `rating` varchar
-(3) DEFAULT NULL,
-  `douban` varchar
-(10) DEFAULT NULL,
-  `mtime` varchar
-(10) DEFAULT NULL,
-  `trailer` varchar
-(100) DEFAULT NULL,
-  `featurette` varchar
-(100) DEFAULT NULL,
-  `status` varchar
-(1) DEFAULT NULL,
-  `category` varchar
-(20) DEFAULT NULL,
-  `poster` varchar
-(200) DEFAULT NULL,
-  `subtitle` varchar
-(200) DEFAULT NULL,
-  `prod` varchar
-(20) DEFAULT NULL,
-  `comments` varchar
-(300) DEFAULT NULL,
-  PRIMARY KEY
-(`id`),
-  UNIQUE KEY `id_UNIQUE`
-(`id`),
+  `id` varchar(20) NOT NULL,
+  `eng_title` varchar(200) NOT NULL,
+  `orig_title` varchar(200) DEFAULT NULL,
+  `year` varchar(4) NOT NULL,
+  `runtime` varchar(10) DEFAULT NULL,
+  `stars` varchar(200) DEFAULT NULL,
+  `director` varchar(100) DEFAULT NULL,
+  `creator` varchar(100) DEFAULT NULL,
+  `plot` varchar(800) DEFAULT NULL,
+  `imdb` varchar(10) DEFAULT NULL,
+  `rating` varchar(3) DEFAULT NULL,
+  `douban` varchar(10) DEFAULT NULL,
+  `mtime` varchar(10) DEFAULT NULL,
+  `trailer` varchar(100) DEFAULT NULL,
+  `featurette` varchar(100) DEFAULT NULL,
+  `status` varchar(1) DEFAULT NULL,
+  `category` varchar(20) DEFAULT NULL,
+  `poster` varchar(200) DEFAULT NULL,
+  `subtitle` varchar(200) DEFAULT NULL,
+  `prod` varchar(20) DEFAULT NULL,
+  `comments` varchar(300) DEFAULT NULL,
+  PRIMARY KEY(`id`),
+  UNIQUE KEY `id_UNIQUE`(`id`),
   KEY `video_idx`
 (`eng_title`,`year`,`category`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='A super table for storing all kinds of video, including movie, TV, documentary, animation and so on.';
@@ -83,68 +50,41 @@ CREATE TABLE `videos`
 
 CREATE TABLE `watch_later`
 (
-  `user_id` varchar
-(20) NOT NULL,
-  `video_id` varchar
-(20) NOT NULL
+  `user_id` varchar(20) NOT NULL,
+  `video_id` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='For storing watcher later lists of users.';
 
 
-INSERT INTO `
-foreverj_phantom_zone`.`recommendations
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611906');
-INSERT INTO `
-foreverj_phantom_zone`.`recommendations
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611980');
-INSERT INTO `
-foreverj_phantom_zone`.`recommendations
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611990');
+INSERT INTO `foreverj_phantom_zone`.`recommendations`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611906');
+INSERT INTO `foreverj_phantom_zone`.`recommendations`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611980');
+INSERT INTO `foreverj_phantom_zone`.`recommendations`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611990');
 
 
-INSERT INTO `
-foreverj_phantom_zone`.`watch_later
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611906');
-INSERT INTO `
-foreverj_phantom_zone`.`watch_later
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611980');
-INSERT INTO `
-foreverj_phantom_zone`.`watch_later
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611990');
-INSERT INTO `
-foreverj_phantom_zone`.`watch_later
-`
-(`user_id`,`video_id`)
-VALUES
-('1525742517517','1525412611911');
+INSERT INTO `foreverj_phantom_zone`.`watch_later`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611906');
+INSERT INTO `foreverj_phantom_zone`.`watch_later`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611980');
+INSERT INTO `foreverj_phantom_zone`.`watch_later`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611990');
+INSERT INTO `foreverj_phantom_zone`.`watch_later`(`user_id`,`video_id`)
+VALUES('1525742517517','1525412611911');
+
 
 INSERT INTO `foreverj_phantom_zone`.`users` values ( '1525412611982','Leon','Li','leon@g.com','leon@g.com');
 
+
 /* Latest list on home */
-(SELECT * FROM foreverj_phantom_zone.videos WHERE category='Movies' LIMIT 3)
+(SELECT * FROM `foreverj_phantom_zone`.`videos` WHERE category='Movies' LIMIT 3)
 UNION
-(SELECT * FROM foreverj_phantom_zone.videos WHERE category='TV' LIMIT 3)
+(SELECT * FROM `foreverj_phantom_zone`.`videos` WHERE category='TV' LIMIT 3)
 UNION
-(SELECT * FROM foreverj_phantom_zone.videos WHERE category='Documentaries' LIMIT 3)
+(SELECT * FROM `foreverj_phantom_zone`.`videos` WHERE category='Documentaries' LIMIT 3)
 UNION
-(SELECT * FROM foreverj_phantom_zone.videos WHERE category='Animations' LIMIT 3);
+(SELECT * FROM `foreverj_phantom_zone`.`videos` WHERE category='Animations' LIMIT 3);
+
 
 /* Vdeos table data insertions */
 INSERT INTO `foreverj_phantom_zone`.`videos`(`id`,`category`,`director`,`eng_title`,`featurette`,`imdb`,`orig_title`,`plot`,`poster`,`status`,`trailer`,`year`) VALUES('1525412611906','Animations','Yoshiaki Kawajiri, Rintaro, Katsuhiro Ôtomo','Neo Tokyo','https://www.youtube.com/embed/B4Il1aktf0M?rel=0&amp;showinfo=0','tt0185481','迷宮物語 (めいきゅうものがたり)','A trilogy of separate stories. In "Labyrinth labyrinthos", a girl and her cat enter a strange world. In "Running Man", a racer takes on the ultimate opponent. In "Construction Cancellation Order", a man must shut down worker robots.','https://ia.media-imdb.com/images/M/MV5BZGE0NTIzMWEtNDMzNi00Y2EyLWIxY2QtYWQ5NDE0ZGZkOTY0L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_UY268_CR2,0,182,268_AL_.jpg','1','https://www.youtube.com/embed/T9wLTSgfNOA?rel=0&amp;showinfo=0','1987');

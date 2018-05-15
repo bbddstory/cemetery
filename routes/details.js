@@ -12,7 +12,7 @@ searchRouter.post('/load', (req, res, next) => {
   }
   var query = `SELECT *
     FROM
-        foreverj_phantom_zone.videos
+        videos
     WHERE
         id='` + req.body.key + `';`;
 

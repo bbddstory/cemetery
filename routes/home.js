@@ -14,21 +14,21 @@ homeRouter.post('/lists', (req, res, next) => {
   /**
    * Get the latest videos of all categories
    */
-  var queryLatest = `(SELECT id,category,eng_title,director,creator,prod,poster FROM foreverj_phantom_zone.videos WHERE category='Movies' LIMIT 3)
+  var queryLatest = `(SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='Movies' LIMIT 3)
     UNION
-      (SELECT id,category,eng_title,director,creator,prod,poster FROM foreverj_phantom_zone.videos WHERE category='TV' LIMIT 3)
+      (SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='TV' LIMIT 3)
     UNION
-      (SELECT id,category,eng_title,director,creator,prod,poster FROM foreverj_phantom_zone.videos WHERE category='Documentaries' LIMIT 3)
+      (SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='Documentaries' LIMIT 3)
     UNION
-      (SELECT id,category,eng_title,director,creator,prod,poster FROM foreverj_phantom_zone.videos WHERE category='Animations' LIMIT 3);`;
+      (SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='Animations' LIMIT 3);`;
   /**
    * Get the watch later list
    */
   var queryWatchLater = `SELECT v.id,v.category,v.eng_title,v.director,v.creator,v.prod,v.poster
     FROM
-      foreverj_phantom_zone.users u,
-      foreverj_phantom_zone.watch_later w,
-      foreverj_phantom_zone.videos v
+      users u,
+      watch_later w,
+      videos v
     WHERE
       u.id=w.user_id AND w.video_id=v.id AND u.email='` + req.body.email + `';`;
   /**
@@ -36,9 +36,9 @@ homeRouter.post('/lists', (req, res, next) => {
    */
   var queryRecomm = `SELECT v.id,v.category,v.eng_title,v.director,v.creator,v.prod,v.poster
     FROM
-      foreverj_phantom_zone.users u,
-      foreverj_phantom_zone.recommendations r,
-      foreverj_phantom_zone.videos v
+      users u,
+      recommendations r,
+      videos v
     WHERE
       u.id=r.user_id AND r.video_id=v.id AND u.email='` + req.body.email + `';`;
 
@@ -90,9 +90,9 @@ homeRouter.post('/del_item', (req, res, next) => {
       tabName = 'recommendations';
       break;
   }
-  var query = `DELETE FROM foreverj_phantom_zone.` + tabName +
+  var query = `DELETE FROM ` + tabName +
     ` WHERE video_id='` + req.body.key +
-    `' AND user_id=(SELECT id FROM foreverj_phantom_zone.users WHERE email='` + req.body.email + `')`;
+    `' AND user_id=(SELECT id FROM users WHERE email='` + req.body.email + `')`;
 
   dbc.getConnection((err, dbc) => {
     if (err) {
