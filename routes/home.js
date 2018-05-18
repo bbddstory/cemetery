@@ -54,14 +54,14 @@ homeRouter.post('/lists', (req, res, next) => {
           data.data = 'Error occured';
           res.status(400).json(data);
         } else {
-          var arr = [], obj = {};
+          var arr = [], listArr = [];
            
           for (var i = 0; i < results.length; i++) {
             for (var j = 0; j < results[i].length; j++) {
-              obj[results[i][j].id] = results[i][j]
+              listArr.push(results[i][j])
             }
-            arr.push(obj);
-            obj = {};
+            arr.push(listArr);
+            listArr = [];
           }
 
           data.data = arr;
