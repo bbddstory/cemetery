@@ -86,4 +86,46 @@ videosRouter.post('/add', (req, res, next) => {
   });
 });
 
+/**
+ * Add video to watch later
+ */
+videosRouter.post('/watchlater', (req, res, next) => {
+  var data = {
+    error: 0
+  }
+
+  var querySel = `SELECT * FROM watch_later WHERE user_id=(SELECT user_id FROM users WHERE email='` + req.body.email + `') AND video_id='` + req.body.key + `';`;
+  var queryInsert = `INSERT INTO watch_later(user_id,video_id) VALUES((SELECT u.id FROM users u WHERE u.email='` + req.body.email + `'), '` + req.body.key + `');`;
+
+  dbc.getConnection((err, dbc) => {
+    if (err) {
+      data.error = 1;
+      data.data = 'Internal Server Error';
+      res.status(500).json(data);
+    } else {
+      dbc.query(querySel, (err, rows, fields) => {
+        if (err) {
+          data.data = 'Error occured';
+          res.status(400).json(data);
+        } else {
+          if (rows.length > 0) {
+            res.status(304).json(data); // Record already exists, no need to add again
+          } else {
+            dbc.query(queryInsert, (err, rows, fields) => {
+              if (err) {
+                data.data = 'Error occured';
+                res.status(400).json(data);
+              } else {
+                data.data = 'Added';
+                res.status(201).json(data);
+              }
+            });
+          }
+          dbc.release();
+        }
+      })
+    }
+  })
+});
+
 module.exports = videosRouter;
