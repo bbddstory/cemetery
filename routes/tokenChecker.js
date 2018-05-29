@@ -23,7 +23,7 @@ tokenChecker.use(function (req, res, next) {
                 if (err) {
                     data['error'] = 1;
                     data['data'] = 'Not authorised';
-                    res.status(401).json(data);
+                    res.status(401).json(data); // Token has expired
                 } else {
                     next();
                 }
