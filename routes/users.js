@@ -52,24 +52,43 @@ usersRouter.post('/login', (req, res, next) => {
   var email = req.body.email;
   var password = req.body.pwd;
 
+  var queryUser = `SELECT * FROM users WHERE email='` + email + `';`;
+  var queryFriends = `SELECT first_name, last_name, email
+                      FROM users
+                      WHERE
+                        id IN (SELECT friend_id
+                            FROM friends
+                            WHERE user_id = (SELECT user_id FROM users WHERE email = '` + email + `'));`;
+
   dbc.getConnection((err, dbc) => {
     if (err) {
       data.error = 1;
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query('SELECT * FROM users WHERE email=?', [email], (err, rows, fields) => {
+      dbc.query(queryUser + queryFriends, (err, results, fields) => {
         if (err) {
           data.error = 1;
           data.data = 'Error Occured!';
           res.status(400).json(data);
         } else {
-          if (rows.length === 1) {
-            if (rows[0].password === password) {
+          if (results[0].length === 1) {
+            if (results[0][0].password === password) {
               data.token = jwt.sign(req.body, process.env.SECRET_KEY, {
                 expiresIn: '7d'
               });
-              data.user = rows[0].first_name
+              data.user = results[0][0].first_name;
+
+              var arr = [];
+
+              for (var i = 0; i < results[1].length; i++) {
+                arr.push({
+                  name: results[1][i].first_name,
+                  email: results[1][i].email
+                });
+              }
+
+              data.friends = arr;
               res.status(200).json(data);
             } else {
               data.error = 1;

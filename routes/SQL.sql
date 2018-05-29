@@ -1,3 +1,9 @@
+CREATE TABLE `foreverj_phantom_zone`.`friends`(
+  `user_id` VARCHAR(20) NOT NULL,
+  `friend_id` VARCHAR(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='For storing friends lists of users.';
+
+
 CREATE TABLE `recommendations`
 (
   `user_id` varchar(20) NOT NULL,

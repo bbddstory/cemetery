@@ -13,7 +13,7 @@ var homeRouter = require('./routes/home');
 var videosRouter = require('./routes/videos');
 var detailsRouter = require('./routes/details');
 
-process.env.SECRET_KEY = 'cemetery';
+process.env.SECRET_KEY = 'cemetery@A2.Hosting';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
