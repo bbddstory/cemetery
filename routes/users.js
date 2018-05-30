@@ -93,12 +93,12 @@ usersRouter.post('/login', (req, res, next) => {
             } else {
               data.error = 1;
               data.data = 'Email or password wrong';
-              res.status(204).json(data);
+              res.status(406).json(data);
             }
           } else {
             data.error = 1;
             data.data = 'Email not found';
-            res.status(204).json(data);
+            res.status(404).json(data);
           }
         }
       });
