@@ -13,8 +13,8 @@ videosRouter.post('/load_cat', (req, res, next) => {
   var cat = req.body.category;
   var ipp = req.body.ipp;
   var queryCnt = `SELECT COUNT(*) cnt FROM videos WHERE category='` + cat + `';`
-  var queryPage = `SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='` + cat
-    + `' ORDER BY year asc LIMIT ` + ipp * (req.body.currPage - 1) + `,` + ipp + `;`
+  var queryPage = `SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='` + cat +
+    `' ORDER BY year asc LIMIT ` + ipp * (req.body.currPage - 1) + `,` + ipp + `;`
 
   dbc.getConnection((err, dbc) => {
     if (err) {
@@ -77,7 +77,6 @@ videosRouter.post('/add', (req, res, next) => {
           data.data = 'Error occured';
           res.status(400).json(data);
         } else {
-          data.data = 'Added';
           res.status(201).json(data);
         }
       });
@@ -93,9 +92,10 @@ videosRouter.post('/watchlater', (req, res, next) => {
   var data = {
     error: 0
   }
-
-  var querySel = `SELECT * FROM watch_later WHERE user_id=(SELECT user_id FROM users WHERE email='` + req.body.email + `') AND video_id='` + req.body.key + `';`;
-  var queryInsert = `INSERT INTO watch_later(user_id,video_id) VALUES((SELECT u.id FROM users u WHERE u.email='` + req.body.email + `'), '` + req.body.key + `');`;
+  var email = req.body.email;
+  var key = req.body.key;
+  var querySel = `SELECT * FROM watch_later WHERE user_id=(SELECT id FROM users WHERE email='` + email + `') AND video_id='` + key + `';`;
+  var queryInsert = `INSERT INTO watch_later(user_id,video_id) VALUES((SELECT u.id FROM users u WHERE u.email='` + email + `'),'` + key + `');`;
 
   dbc.getConnection((err, dbc) => {
     if (err) {
@@ -116,16 +116,64 @@ videosRouter.post('/watchlater', (req, res, next) => {
                 data.data = 'Error occured';
                 res.status(400).json(data);
               } else {
-                data.data = 'Added';
                 res.status(201).json(data);
               }
-            });
+              dbc.release();
+            })
           }
-          dbc.release();
         }
       })
     }
-  })
+  });
+});
+
+/**
+ * Recommend a video to a friend
+ */
+videosRouter.post('/recomm', (req, res, next) => {
+  var data = {
+    error: 0
+  }
+  var vid = req.body.vid;
+  var friendEmail = req.body.friendEmail;
+  var querySel = `SELECT *
+                      FROM recommendations
+                      WHERE
+                        user_id = (SELECT id
+                            FROM users
+                            WHERE email = '` + friendEmail + `') AND video_id = '` + vid + `';`;
+  var queryInsert = `INSERT INTO recommendations(user_id,video_id) VALUES((SELECT u.id FROM users u WHERE u.email='` + friendEmail + `'),'` + vid + `');`;
+
+  dbc.getConnection((err, dbc) => {
+    if (err) {
+      data.error = 1;
+      data.data = 'Internal Server Error';
+      res.status(500).json(data);
+    } else {
+      dbc.query(querySel, (err, rows, fields) => {
+        if (err) {
+          data.data = 'Error occured';
+          res.status(400).json(data);
+        } else {
+          console.log(rows);
+          
+          if (rows.length > 0) {
+            res.status(304).json(data); // Record already exists, no need to add again
+          } else {
+            dbc.query(queryInsert, (err, rows, fields) => {
+              if (err) {
+                data.data = 'Error occured';
+                res.status(400).json(data);
+              } else {
+                res.status(201).json(data);
+              }
+              dbc.release();
+            })
+          }
+        }
+      })
+    }
+  });
 });
 
 module.exports = videosRouter;

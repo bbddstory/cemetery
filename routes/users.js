@@ -53,7 +53,7 @@ usersRouter.post('/login', (req, res, next) => {
   var password = req.body.pwd;
 
   var queryUser = `SELECT * FROM users WHERE email='` + email + `';`;
-  var queryFriends = `SELECT first_name, last_name, email
+  var queryFriends = `SELECT first_name, email
                       FROM users
                       WHERE
                         id IN (SELECT friend_id
@@ -104,7 +104,44 @@ usersRouter.post('/login', (req, res, next) => {
       });
       dbc.release();
     }
-  })
+  });
+
+  /**
+   * Get user friends
+   */
+  usersRouter.post('/friends', (req, res, next) => {
+    var data = {
+      error: 0
+    }
+    var email = req.body.email;
+
+    var queryFriends = `SELECT first_name name, email
+                      FROM users
+                      WHERE
+                        id IN (SELECT friend_id
+                            FROM friends
+                            WHERE user_id = (SELECT user_id FROM users WHERE email = '` + email + `'));`;
+
+    dbc.getConnection((err, dbc) => {
+      if (err) {
+        data.error = 1;
+        data.data = 'Internal Server Error';
+        res.status(500).json(data);
+      } else {
+        dbc.query(queryFriends, (err, rows, fields) => {
+          if (err) {
+            data.error = 1;
+            data.data = 'Error Occured!';
+            res.status(400).json(data);
+          } else {
+            data.friends = rows;
+            res.status(200).json(data);
+          }
+        });
+        dbc.release();
+      }
+    })
+  });
 });
 
 module.exports = usersRouter;
