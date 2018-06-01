@@ -98,49 +98,49 @@ usersRouter.post('/login', (req, res, next) => {
           } else {
             data.error = 1;
             data.data = 'Email not found';
-            res.status(404).json(data);
+            res.status(406).json(data);
           }
         }
       });
       dbc.release();
     }
   });
+});
 
-  /**
-   * Get user friends
-   */
-  usersRouter.post('/friends', (req, res, next) => {
-    var data = {
-      error: 0
+/**
+ * Get user friends
+ */
+usersRouter.post('/friends', (req, res, next) => {
+  var data = {
+    error: 0
+  }
+  var email = req.body.email;
+
+  var queryFriends = `SELECT first_name name, email
+                    FROM users
+                    WHERE
+                      id IN (SELECT friend_id
+                          FROM friends
+                          WHERE user_id = (SELECT user_id FROM users WHERE email = '` + email + `'));`;
+
+  dbc.getConnection((err, dbc) => {
+    if (err) {
+      data.error = 1;
+      data.data = 'Internal Server Error';
+      res.status(500).json(data);
+    } else {
+      dbc.query(queryFriends, (err, rows, fields) => {
+        if (err) {
+          data.error = 1;
+          data.data = 'Error Occured!';
+          res.status(400).json(data);
+        } else {
+          data.friends = rows;
+          res.status(200).json(data);
+        }
+      });
+      dbc.release();
     }
-    var email = req.body.email;
-
-    var queryFriends = `SELECT first_name name, email
-                      FROM users
-                      WHERE
-                        id IN (SELECT friend_id
-                            FROM friends
-                            WHERE user_id = (SELECT user_id FROM users WHERE email = '` + email + `'));`;
-
-    dbc.getConnection((err, dbc) => {
-      if (err) {
-        data.error = 1;
-        data.data = 'Internal Server Error';
-        res.status(500).json(data);
-      } else {
-        dbc.query(queryFriends, (err, rows, fields) => {
-          if (err) {
-            data.error = 1;
-            data.data = 'Error Occured!';
-            res.status(400).json(data);
-          } else {
-            data.friends = rows;
-            res.status(200).json(data);
-          }
-        });
-        dbc.release();
-      }
-    })
   });
 });
 
