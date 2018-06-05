@@ -44,7 +44,7 @@ videosRouter.post('/add', (req, res, next) => {
   var data = {
     error: 0
   }
-  var videoData = {
+  var values = {
     'id': new Date(),
     'eng_title': req.body.engTitle,
     'orig_title': req.body.origTitle,
@@ -72,7 +72,58 @@ videosRouter.post('/add', (req, res, next) => {
       data.data = 'Internal Server Error';
       res.status(500).json(data);
     } else {
-      dbc.query(`INSERT INTO videos SET ? `, videoData, (err, rows, fields) => {
+      dbc.query(`INSERT INTO videos SET ? `, values, (err, rows, fields) => {
+        if (err) {
+          data.data = 'Error occured';
+          res.status(400).json(data);
+        } else {
+          res.status(201).json(data);
+        }
+      });
+      dbc.release();
+    }
+  });
+});
+
+/**
+ * Update video details
+ */
+videosRouter.post('/update', (req, res, next) => {
+  var data = {
+    error: 0
+  }
+
+  console.log(req.body.details);
+
+  var queryUpdate = `UPDATE videos SET eng_title = '` + req.body.details.eng_title +
+    `', orig_title = '` + req.body.details.orig_title +
+    `', year = '` + req.body.details.year +
+    `', runtime = '` + req.body.details.runtime +
+    `', stars = '` + req.body.details.stars +
+    `', director = '` + req.body.details.director +
+    `', creator = '` + req.body.details.creator +
+    `', plot = '` + req.body.details.plot +
+    `', imdb = '` + req.body.details.imdb +
+    `', rating = '` + req.body.details.rating +
+    `', douban = '` + req.body.details.douban +
+    `', mtime = '` + req.body.details.mtime +
+    `', trailer = '` + req.body.details.trailer +
+    `', featurette = '` + req.body.details.featurette +
+    `', status = '` + req.body.details.status +
+    `', category = '` + req.body.details.category +
+    `', poster = '` + req.body.details.poster +
+    `', subtitle = '` + req.body.details.subtitle +
+    `' WHERE id = '` + req.body.details.id + `';`
+
+  console.log(queryUpdate);
+
+  dbc.getConnection((err, dbc) => {
+    if (err) {
+      data.error = 1;
+      data.data = 'Internal Server Error';
+      res.status(500).json(data);
+    } else {
+      dbc.query(queryUpdate, (err, rows, fields) => {
         if (err) {
           data.data = 'Error occured';
           res.status(400).json(data);
@@ -156,7 +207,7 @@ videosRouter.post('/recomm', (req, res, next) => {
           res.status(400).json(data);
         } else {
           console.log(rows);
-          
+
           if (rows.length > 0) {
             res.status(304).json(data); // Record already exists, no need to add again
           } else {
