@@ -27,11 +27,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(tokenChecker);
+// app.use('/images', express.static('../images'));
+
 app.use('/search', searchRouter);
 app.use('/users', usersRouter);
 app.use('/home', homeRouter);
 app.use('/videos', videosRouter);
 app.use('/details', detailsRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

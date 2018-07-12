@@ -3,11 +3,29 @@ var jwt = require('jsonwebtoken');
 
 var usersRouter = express.Router();
 var dbc = require('../database/database');
+var fs = require('fs');
 
 /**
  * Register users
  */
+usersRouter.post('/images/:id', (req, res, next) => {
+  console.log(req.params);
+
+  var data = {
+    error: 0
+  }
+  
+  var bitmap = fs.readFileSync('../images/us.png');
+  // console.log(new Buffer(bitmap).toString('base64'));
+
+  // Convert binary data to base64 encoded string
+  data.data = new Buffer(bitmap).toString('base64');
+  
+  res.status(200).json(data);
+});
+
 usersRouter.post('/register', (req, res, next) => {
+
   var data = {
     error: 0
   }
