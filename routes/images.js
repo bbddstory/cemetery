@@ -1,7 +1,7 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
 
-var usersRouter = express.Router();
+var imagesRouter = express.Router();
 var dbc = require('../database/database');
 var fs = require('fs');
 
@@ -9,7 +9,49 @@ var fs = require('fs');
  * Register users
  */
 
-usersRouter.post('/register', (req, res, next) => {
+// base64 encoded images loading tryout
+imagesRouter.post('/get/:id', (req, res, next) => {
+  console.log(req.params.id);
+  
+  var data = {
+    error: 0,
+    data: []
+  }
+  
+  var bitmap = fs.readFileSync('../../images/' + req.params.id);
+  // Convert binary data to base64 encoded string
+  var img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+
+  bitmap = fs.readFileSync('../../images/girl.png');
+  img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+
+  bitmap = fs.readFileSync('../../images/oil.png');
+  img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+  
+  bitmap = fs.readFileSync('../../images/putin.png');
+  img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+
+  bitmap = fs.readFileSync('../../images/us.png');
+  img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+
+  bitmap = fs.readFileSync('../../images/well.png');
+  img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+
+  bitmap = fs.readFileSync('../../images/mugshot.jpg');
+  img = new Buffer(bitmap).toString('base64');
+  data.data.push(img);
+  
+  res.status(200).json(data);
+});
+
+imagesRouter.post('/register', (req, res, next) => {
+
   var data = {
     error: 0
   }
@@ -47,7 +89,7 @@ usersRouter.post('/register', (req, res, next) => {
 /**
  * User login
  */
-usersRouter.post('/login', (req, res, next) => {
+imagesRouter.post('/login', (req, res, next) => {
   var data = {
     error: 0
   }
@@ -112,7 +154,7 @@ usersRouter.post('/login', (req, res, next) => {
 /**
  * Get user friends
  */
-usersRouter.post('/friends', (req, res, next) => {
+imagesRouter.post('/friends', (req, res, next) => {
   var data = {
     error: 0
   }
@@ -146,4 +188,4 @@ usersRouter.post('/friends', (req, res, next) => {
   });
 });
 
-module.exports = usersRouter;
+module.exports = imagesRouter;

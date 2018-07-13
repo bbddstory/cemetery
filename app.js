@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+var compression = require('compression');
 var express = require('express');
 var path = require('path');
 var cors = require('cors');
@@ -7,17 +8,21 @@ var logger = require('morgan');
 
 var app = express();
 var tokenChecker = require('./routes/tokenChecker');
+var imagesRouter = require('./routes/images');
 var searchRouter = require('./routes/search');
 var usersRouter = require('./routes/users');
 var homeRouter = require('./routes/home');
 var videosRouter = require('./routes/videos');
 var detailsRouter = require('./routes/details');
 
-process.env.SECRET_KEY = 'cemetery@A2.Hosting';
+// process.env.SECRET_KEY = 'cemetery@A2.Hosting';
+// process.env.PORT = '49999';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+app.use(compression());
 
 app.use(cors()); // Enable CORS
 app.use(logger('dev'));
@@ -27,8 +32,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(tokenChecker);
-// app.use('/images', express.static('../images'));
-
+// app.use('/stat_images', express.static('../../images'));
+app.use('/images', imagesRouter);
 app.use('/search', searchRouter);
 app.use('/users', usersRouter);
 app.use('/home', homeRouter);
