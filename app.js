@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(tokenChecker);
+// app.use(tokenChecker);
 // app.use('/stat_images', express.static('../../images'));
 app.use('/images', imagesRouter);
 app.use('/search', searchRouter);

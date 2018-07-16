@@ -4,11 +4,34 @@ var jwt = require('jsonwebtoken');
 var imagesRouter = express.Router();
 var dbc = require('../database/database');
 var fs = require('fs');
+var formidable = require('formidable');
+
+imagesRouter.post('/upload', (req, res, next) => {
+  console.log('-- In upload...');
+  
+  var form = new formidable.IncomingForm();
+
+  form.parse(req, function (err, fields, files) {
+    console.log(files);
+    
+    // res.write('File uploaded');
+    console.log('File uploaded');
+    
+    var oldpath = files.imageupload.path;
+    console.log(oldpath);
+    
+    var newpath = '../../images/' + files.imageupload.name;
+    fs.rename(oldpath, newpath, function (err) {
+      if (err) throw err;
+      res.write('File uploaded and moved!');
+      res.end();
+    });
+  });
+});
 
 /**
- * Register users
+ * Get images in base64 format
  */
-
 // base64 encoded images loading tryout
 imagesRouter.post('/get/:id', (req, res, next) => {
   console.log(req.params.id);
