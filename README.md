@@ -7,6 +7,6 @@ To start the node instance on the hosting service for production, use the follow
 
 nohup node bin/www &
 
-To stop a currently running Node.js application, type the following command:
+To stop all the currently running Node.js application, type the following command:
 
 pkill node

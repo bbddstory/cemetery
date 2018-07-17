@@ -5,27 +5,56 @@ var imagesRouter = express.Router();
 var dbc = require('../database/database');
 var fs = require('fs');
 var formidable = require('formidable');
+const sharp = require('sharp');
 
 imagesRouter.post('/upload', (req, res, next) => {
   console.log('-- In upload...');
-  
+
   var form = new formidable.IncomingForm();
 
   form.parse(req, function (err, fields, files) {
-    console.log(files);
-    
+    // console.log(files);
+
     // res.write('File uploaded');
     console.log('File uploaded');
-    
+
     var oldpath = files.imageupload.path;
     console.log(oldpath);
-    
+
     var newpath = '../../images/' + files.imageupload.name;
-    fs.rename(oldpath, newpath, function (err) {
+    var newthumb = '../../images/thumb_' + files.imageupload.name;
+    // fs.rename(oldpath, newpath, function (err) {
+      // res.write('File uploaded and moved!');
+
+      // Generate reduced version
+      sharp(oldpath)
+        .resize(450, null)
+        .jpeg({
+          quality: 90,
+          progressive: true
+        })
+        .toFile(newpath, (err, info) => {
+          console.log(err);
+          console.log(info);
+        }).toBuffer();
+
+      // Generate thumbnail
+      sharp(oldpath)
+        .resize(120, null)
+        .jpeg({
+          quality: 90,
+          progressive: true
+        })
+        .toFile(newthumb, (err, info) => {
+          console.log(err);
+          console.log(info);
+        }).toBuffer();
+
       if (err) throw err;
-      res.write('File uploaded and moved!');
-      res.end();
-    });
+      res.type('json').sendStatus(200);
+
+    // });
+
   });
 });
 
@@ -35,12 +64,12 @@ imagesRouter.post('/upload', (req, res, next) => {
 // base64 encoded images loading tryout
 imagesRouter.post('/get/:id', (req, res, next) => {
   console.log(req.params.id);
-  
+
   var data = {
     error: 0,
     data: []
   }
-  
+
   var bitmap = fs.readFileSync('../../images/' + req.params.id);
   // Convert binary data to base64 encoded string
   var img = new Buffer(bitmap).toString('base64');
@@ -53,7 +82,7 @@ imagesRouter.post('/get/:id', (req, res, next) => {
   bitmap = fs.readFileSync('../../images/oil.png');
   img = new Buffer(bitmap).toString('base64');
   data.data.push(img);
-  
+
   bitmap = fs.readFileSync('../../images/putin.png');
   img = new Buffer(bitmap).toString('base64');
   data.data.push(img);
@@ -69,7 +98,7 @@ imagesRouter.post('/get/:id', (req, res, next) => {
   bitmap = fs.readFileSync('../../images/mugshot.jpg');
   img = new Buffer(bitmap).toString('base64');
   data.data.push(img);
-  
+
   res.status(200).json(data);
 });
 
