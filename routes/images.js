@@ -5,21 +5,36 @@ var imagesRouter = express.Router();
 var fs = require('fs');
 var formidable = require('formidable');
 // const sharp = require('sharp');
+// var aes = require("crypto-js/AES");
+var crypto = require("crypto-js");
 
 imagesRouter.post('/upload', (req, res, next) => {
-  console.log('1. /upload');
+  // console.log('1. /upload');
 
   var form = new formidable.IncomingForm();
 
   form.parse(req, function (err, fields, files) {
-    console.log('2. File uploaded');
+    // console.log('2. File uploaded');
 
     var srcPath = files.imageupload.path;
     var destPath = '../../images/' + files.imageupload.name;
-    // var thumbPath = '../../images/thumb_' + files.imageupload.name;
 
-    console.log('srcPath:', srcPath);
-    console.log('destPath:', destPath);
+    console.log(files.imageupload.name);
+    
+    var key = crypto.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
+    var iv = crypto.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+
+    var cipherTxt = crypto.AES.encrypt(files.imageupload.name, key,
+      {
+        iv: iv,
+        // mode: crypto.mode.ECB,
+        // padding: crypto.pad.NoPadding
+      }).toString().replace(/\//gi, '');
+
+    console.log(cipherTxt);
+
+    // console.log('srcPath:', srcPath);
+    // console.log('destPath:', destPath);
 
     fs.copyFile(srcPath, destPath, function (err) {
       if(err) {
@@ -50,7 +65,7 @@ imagesRouter.post('/upload', (req, res, next) => {
         //     console.log(info);
         //   }).toBuffer();
   
-        console.log('3. File copied');
+        // console.log('3. File copied');
         res.type('json').sendStatus(200);
       }
     });
@@ -62,7 +77,7 @@ imagesRouter.post('/upload', (req, res, next) => {
  */
 // base64 encoded images loading tryout
 imagesRouter.post('/get/:id', (req, res, next) => {
-  console.log(req.params.id);
+  // console.log(req.params.id);
 
   var data = {
     error: 0,
