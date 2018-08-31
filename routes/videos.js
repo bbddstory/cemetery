@@ -13,7 +13,7 @@ videosRouter.post('/load_cat', (req, res, next) => {
   var cat = req.body.category;
   var ipp = req.body.ipp;
   var queryCnt = `SELECT COUNT(*) cnt FROM videos WHERE category='` + cat + `';`
-  var queryPage = `SELECT id,category,eng_title,director,creator,prod,poster FROM videos WHERE category='` + cat +
+  var queryPage = `SELECT id,category,eng_title,year,director,creator,prod,poster FROM videos WHERE category='` + cat +
     `' ORDER BY year asc LIMIT ` + ipp * (req.body.currPage - 1) + `,` + ipp + `;`
 
   dbc.getConnection((err, dbc) => {
@@ -128,7 +128,7 @@ videosRouter.post('/update', (req, res, next) => {
           data.data = 'Error occured';
           res.status(400).json(data);
         } else {
-          res.status(201).json(data);
+          res.status(200).json(data);
         }
       });
       dbc.release();
